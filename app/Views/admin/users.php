@@ -26,6 +26,8 @@
     <p>
         <a href="<?= site_url('admin/users/create') ?>">Create New User</a>
         |
+        <a href="<?= site_url('admin/audit-logs') ?>">View Audit Logs</a>
+        |
         <a href="<?= site_url('logout') ?>">Logout</a>
     </p>
 

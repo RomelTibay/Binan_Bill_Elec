@@ -19,5 +19,6 @@ $routes->get('admin/users/edit/(:num)', 'AdminUsers::edit/$1', ['filter' => 'aut
 $routes->post('admin/users/update/(:num)', 'AdminUsers::update/$1', ['filter' => 'auth']);
 $routes->get('admin/users/delete/(:num)', 'AdminUsers::confirmDelete/$1', ['filter' => 'auth']);
 $routes->post('admin/users/delete/(:num)', 'AdminUsers::destroy/$1', ['filter' => 'auth']);
+$routes->get('admin/audit-logs', 'AdminUsers::auditLogs', ['filter' => 'auth']);
 
 $routes->get('billing', 'Home::billing', ['filter' => 'auth']);

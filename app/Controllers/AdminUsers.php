@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\AuditLogModel;
 use App\Models\UserModel;
 use Config\Database;
 
@@ -103,6 +104,21 @@ class AdminUsers extends BaseController
 
             return redirect()->back()->withInput()->with('errors', $users->errors());
         }
+
+        helper('audit');
+        log_action(
+            'CREATE',
+            'ADMIN_USERS',
+            'users',
+            (int) $users->getInsertID(),
+            [
+                'full_name' => $userData['full_name'],
+                'username'  => $userData['username'],
+                'email'     => $userData['email'],
+                'role_id'   => $userData['role_id'],
+                'is_active' => $userData['is_active'],
+            ]
+        );
 
         if ($isAjax) {
             return $this->response->setJSON([
@@ -255,6 +271,30 @@ class AdminUsers extends BaseController
             return redirect()->back()->withInput()->with('errors', $users->errors());
         }
 
+        helper('audit');
+        log_action(
+            'UPDATE',
+            'ADMIN_USERS',
+            'users',
+            $id,
+            [
+                'before' => [
+                    'full_name' => $user['full_name'],
+                    'username'  => $user['username'],
+                    'email'     => $user['email'],
+                    'role_id'   => $user['role_id'],
+                    'is_active' => $user['is_active'],
+                ],
+                'after' => [
+                    'full_name' => $updateData['full_name'],
+                    'username'  => $updateData['username'],
+                    'email'     => $updateData['email'],
+                    'role_id'   => $updateData['role_id'],
+                    'is_active' => $updateData['is_active'],
+                ],
+            ]
+        );
+
         if ($isAjax) {
             return $this->response->setJSON([
                 'ok'       => true,
@@ -283,16 +323,8 @@ class AdminUsers extends BaseController
             return redirect()->to('/admin/users')->with('errors', ['You cannot delete your own account.']);
         }
 
-        $roles = Database::connect()
-            ->table('roles')
-            ->select('id, name')
-            ->orderBy('name', 'ASC')
-            ->get()
-            ->getResultArray();
-
         return view('admin/user_delete', [
             'user'        => $user,
-            'roles'       => $roles,
             'currentUser' => (string) session()->get('full_name'),
         ]);
     }
@@ -356,6 +388,21 @@ class AdminUsers extends BaseController
             return redirect()->to('/admin/users')->with('errors', ['Failed to delete user.']);
         }
 
+        helper('audit');
+        log_action(
+            'DELETE',
+            'ADMIN_USERS',
+            'users',
+            $id,
+            [
+                'full_name' => $user['full_name'],
+                'username'  => $user['username'],
+                'email'     => $user['email'],
+                'role_id'   => $user['role_id'],
+                'is_active' => $user['is_active'],
+            ]
+        );
+
         if ($isAjax) {
             return $this->response->setJSON([
                 'ok'       => true,
@@ -365,5 +412,19 @@ class AdminUsers extends BaseController
         }
 
         return redirect()->to('/admin/users')->with('success', 'User deleted successfully.');
+    }
+
+    public function auditLogs()
+    {
+        if (session()->get('role_name') !== 'ADMIN') {
+            return redirect()->to('/billing');
+        }
+
+        $logs = new AuditLogModel();
+
+        return view('admin/audit_logs', [
+            'logs'        => $logs->getLogsForAdmin(),
+            'currentUser' => (string) session()->get('full_name'),
+        ]);
     }
 }
