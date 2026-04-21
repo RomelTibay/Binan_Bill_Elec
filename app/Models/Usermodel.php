@@ -30,4 +30,12 @@ class UserModel extends Model
 
         return $row ?: null;
     }
+
+    public function getUsersForAdminList(): array
+    {
+        return $this->select('users.id, users.full_name, users.username, users.email, users.is_active, roles.name AS role_name')
+            ->join('roles', 'roles.id = users.role_id', 'inner')
+            ->orderBy('users.id', 'ASC')
+            ->findAll();
+    }
 }

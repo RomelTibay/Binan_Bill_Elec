@@ -15,7 +15,7 @@ class Home extends BaseController
             return redirect()->to('/billing');
         }
 
-        return 'Admin dashboard placeholder';
+        return redirect()->to('/admin/users');
     }
 
     public function billing()
