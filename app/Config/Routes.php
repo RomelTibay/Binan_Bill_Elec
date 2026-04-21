@@ -22,3 +22,13 @@ $routes->post('admin/users/delete/(:num)', 'AdminUsers::destroy/$1', ['filter' =
 $routes->get('admin/audit-logs', 'AdminUsers::auditLogs', ['filter' => 'auth']);
 
 $routes->get('billing', 'Home::billing', ['filter' => 'auth']);
+$routes->get('billing/dashboard', 'Billing::index', ['filter' => 'auth']);
+$routes->get('billing/compute', 'Billing::computeTool', ['filter' => 'auth']);
+$routes->get('billing/clients/create', 'Billing::createClient', ['filter' => 'auth']);
+$routes->post('billing/clients', 'Billing::storeClient', ['filter' => 'auth']);
+$routes->get('billing/compute/(:num)', 'Billing::compute/$1', ['filter' => 'auth']);
+$routes->post('billing/compute/(:num)', 'Billing::storeCompute/$1', ['filter' => 'auth']);
+$routes->post('billing/compute-preview', 'Billing::previewCompute', ['filter' => 'auth']);
+$routes->get('billing/history', 'Billing::history', ['filter' => 'auth']);
+$routes->get('billing/history/(:num)', 'Billing::billDetail/$1', ['filter' => 'auth']);
+$routes->get('billing/action-trails', 'Billing::actionTrails', ['filter' => 'auth']);

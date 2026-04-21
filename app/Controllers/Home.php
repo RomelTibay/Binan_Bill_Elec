@@ -24,6 +24,6 @@ class Home extends BaseController
             return redirect()->to('/admin');
         }
 
-        return 'Billing dashboard placeholder';
+        return redirect()->to('/billing/dashboard');
     }
 }
