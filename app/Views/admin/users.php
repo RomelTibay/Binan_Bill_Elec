@@ -8,7 +8,16 @@
     <h2>Admin User Management</h2>
 
     <p>Logged in as: <?= esc($currentUser) ?></p>
-    <p><a href="/logout">Logout</a></p>
+
+    <?php if (session()->getFlashdata('success')): ?>
+        <p style="color:green;"><?= esc(session()->getFlashdata('success')) ?></p>
+    <?php endif; ?>
+
+    <p>
+        <a href="<?= site_url('admin/users/create') ?>">Create New User</a>
+        |
+        <a href="<?= site_url('logout') ?>">Logout</a>
+    </p>
 
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
