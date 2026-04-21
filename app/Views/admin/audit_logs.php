@@ -23,14 +23,12 @@
                 <th>Action</th>
                 <th>Module</th>
                 <th>Target</th>
-                <th>IP</th>
-                <th>Details</th>
             </tr>
         </thead>
         <tbody>
             <?php if (empty($logs)): ?>
                 <tr>
-                    <td colspan="8">No audit logs found.</td>
+                    <td colspan="6">No audit logs found.</td>
                 </tr>
             <?php else: ?>
                 <?php foreach ($logs as $log): ?>
@@ -50,8 +48,6 @@
                         <td><?= esc((string) $log['action']) ?></td>
                         <td><?= esc((string) $log['module']) ?></td>
                         <td><?= esc($target) ?></td>
-                        <td><?= esc((string) ($log['ip_address'] ?? '-')) ?></td>
-                        <td><?= esc((string) ($log['details'] ?? '-')) ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>

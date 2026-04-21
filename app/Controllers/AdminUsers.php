@@ -110,14 +110,7 @@ class AdminUsers extends BaseController
             'CREATE',
             'ADMIN_USERS',
             'users',
-            (int) $users->getInsertID(),
-            [
-                'full_name' => $userData['full_name'],
-                'username'  => $userData['username'],
-                'email'     => $userData['email'],
-                'role_id'   => $userData['role_id'],
-                'is_active' => $userData['is_active'],
-            ]
+            (int) $users->getInsertID()
         );
 
         if ($isAjax) {
@@ -276,23 +269,7 @@ class AdminUsers extends BaseController
             'UPDATE',
             'ADMIN_USERS',
             'users',
-            $id,
-            [
-                'before' => [
-                    'full_name' => $user['full_name'],
-                    'username'  => $user['username'],
-                    'email'     => $user['email'],
-                    'role_id'   => $user['role_id'],
-                    'is_active' => $user['is_active'],
-                ],
-                'after' => [
-                    'full_name' => $updateData['full_name'],
-                    'username'  => $updateData['username'],
-                    'email'     => $updateData['email'],
-                    'role_id'   => $updateData['role_id'],
-                    'is_active' => $updateData['is_active'],
-                ],
-            ]
+            $id
         );
 
         if ($isAjax) {
@@ -393,14 +370,7 @@ class AdminUsers extends BaseController
             'DELETE',
             'ADMIN_USERS',
             'users',
-            $id,
-            [
-                'full_name' => $user['full_name'],
-                'username'  => $user['username'],
-                'email'     => $user['email'],
-                'role_id'   => $user['role_id'],
-                'is_active' => $user['is_active'],
-            ]
+            $id
         );
 
         if ($isAjax) {

@@ -13,6 +13,8 @@ class Auth extends BaseController
 
     public function login()
     {
+        helper('audit');
+
         $username = trim((string) $this->request->getPost('username'));
         $password = (string) $this->request->getPost('password');
 
@@ -36,6 +38,8 @@ class Auth extends BaseController
             'role_name'    => $user['role_name'],
         ]);
 
+        log_action('LOGIN', 'AUTH', 'users', (int) $user['id']);
+
         if ($user['role_name'] === 'ADMIN') {
             return redirect()->to('/admin');
         }
@@ -45,6 +49,13 @@ class Auth extends BaseController
 
     public function logout()
     {
+        helper('audit');
+
+        $userId = session()->get('user_id') ? (int) session()->get('user_id') : null;
+        if ($userId !== null) {
+            log_action('LOGOUT', 'AUTH', 'users', $userId);
+        }
+
         session()->destroy();
         return redirect()->to('/login');
     }

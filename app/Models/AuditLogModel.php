@@ -17,14 +17,12 @@ class AuditLogModel extends Model
         'module',
         'target_type',
         'target_id',
-        'details',
-        'ip_address',
         'created_at',
     ];
 
     public function getLogsForAdmin(int $limit = 200): array
     {
-        return $this->select('audit_logs.id, audit_logs.user_id, audit_logs.action, audit_logs.module, audit_logs.target_type, audit_logs.target_id, audit_logs.details, audit_logs.ip_address, audit_logs.created_at, users.username')
+        return $this->select('audit_logs.id, audit_logs.user_id, audit_logs.action, audit_logs.module, audit_logs.target_type, audit_logs.target_id, audit_logs.created_at, users.username')
             ->join('users', 'users.id = audit_logs.user_id', 'left')
             ->orderBy('audit_logs.id', 'DESC')
             ->findAll($limit);
