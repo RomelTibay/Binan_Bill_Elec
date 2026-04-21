@@ -55,7 +55,15 @@
                         <td><?= esc($user['email']) ?></td>
                         <td><?= esc($user['role_name']) ?></td>
                         <td><?= (int) $user['is_active'] === 1 ? 'Yes' : 'No' ?></td>
-                        <td><a href="<?= site_url('admin/users/edit/' . $user['id']) ?>">Edit</a></td>
+                        <td>
+                            <a href="<?= site_url('admin/users/edit/' . $user['id']) ?>">Edit</a>
+                            &nbsp;|&nbsp;
+                            <?php if ((int) $user['id'] !== (int) session()->get('user_id')): ?>
+                                <a href="<?= site_url('admin/users/delete/' . $user['id']) ?>" style="color: red;">Delete</a>
+                            <?php else: ?>
+                                <span style="color: #aaa;">Delete</span>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>

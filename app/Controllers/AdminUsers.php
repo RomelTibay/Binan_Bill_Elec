@@ -168,4 +168,59 @@ class AdminUsers extends BaseController
 
         return redirect()->to('/admin/users')->with('success', 'User updated successfully.');
     }
+    public function confirmDelete(int $id)
+    {
+        if (session()->get('role_name') !== 'ADMIN') {
+            return redirect()->to('/billing');
+        }
+
+        $users = new UserModel();
+        $user  = $users->find($id);
+
+        if (! $user) {
+            return redirect()->to('/admin/users')->with('errors', ['User not found.']);
+        }
+
+        // Prevent admin from deleting their own account
+        if ((int) $id === (int) session()->get('user_id')) {
+            return redirect()->to('/admin/users')->with('errors', ['You cannot delete your own account.']);
+        }
+
+        $roles = Database::connect()
+            ->table('roles')
+            ->select('id, name')
+            ->orderBy('name', 'ASC')
+            ->get()
+            ->getResultArray();
+
+        return view('admin/user_delete', [
+            'user'        => $user,
+            'roles'       => $roles,
+            'currentUser' => (string) session()->get('full_name'),
+        ]);
+    }
+
+    public function destroy(int $id)
+    {
+        if (session()->get('role_name') !== 'ADMIN') {
+            return redirect()->to('/billing');
+        }
+
+        if ((int) $id === (int) session()->get('user_id')) {
+            return redirect()->to('/admin/users')->with('errors', ['You cannot delete your own account.']);
+        }
+
+        $users = new UserModel();
+        $user  = $users->find($id);
+
+        if (! $user) {
+            return redirect()->to('/admin/users')->with('errors', ['User not found.']);
+        }
+
+        if (! $users->delete($id)) {
+            return redirect()->to('/admin/users')->with('errors', ['Failed to delete user.']);
+        }
+
+        return redirect()->to('/admin/users')->with('success', 'User deleted successfully.');
+    }
 }
