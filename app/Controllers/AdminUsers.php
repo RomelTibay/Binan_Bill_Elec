@@ -299,11 +299,31 @@ class AdminUsers extends BaseController
 
     public function destroy(int $id)
     {
+        $isAjax = $this->request->isAJAX();
+
         if (session()->get('role_name') !== 'ADMIN') {
+            if ($isAjax) {
+                return $this->response
+                    ->setStatusCode(403)
+                    ->setJSON([
+                        'ok'      => false,
+                        'message' => 'Unauthorized request.',
+                    ]);
+            }
+
             return redirect()->to('/billing');
         }
 
         if ((int) $id === (int) session()->get('user_id')) {
+            if ($isAjax) {
+                return $this->response
+                    ->setStatusCode(422)
+                    ->setJSON([
+                        'ok'      => false,
+                        'message' => 'You cannot delete your own account.',
+                    ]);
+            }
+
             return redirect()->to('/admin/users')->with('errors', ['You cannot delete your own account.']);
         }
 
@@ -311,11 +331,37 @@ class AdminUsers extends BaseController
         $user  = $users->find($id);
 
         if (! $user) {
+            if ($isAjax) {
+                return $this->response
+                    ->setStatusCode(404)
+                    ->setJSON([
+                        'ok'      => false,
+                        'message' => 'User not found.',
+                    ]);
+            }
+
             return redirect()->to('/admin/users')->with('errors', ['User not found.']);
         }
 
         if (! $users->delete($id)) {
+            if ($isAjax) {
+                return $this->response
+                    ->setStatusCode(500)
+                    ->setJSON([
+                        'ok'      => false,
+                        'message' => 'Failed to delete user.',
+                    ]);
+            }
+
             return redirect()->to('/admin/users')->with('errors', ['Failed to delete user.']);
+        }
+
+        if ($isAjax) {
+            return $this->response->setJSON([
+                'ok'       => true,
+                'message'  => 'User deleted successfully.',
+                'redirect' => site_url('admin/users'),
+            ]);
         }
 
         return redirect()->to('/admin/users')->with('success', 'User deleted successfully.');
