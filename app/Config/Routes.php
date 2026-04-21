@@ -15,4 +15,6 @@ $routes->get('admin', 'Home::admin', ['filter' => 'auth']);
 $routes->get('admin/users', 'AdminUsers::index', ['filter' => 'auth']);
 $routes->get('admin/users/create', 'AdminUsers::create', ['filter' => 'auth']);
 $routes->post('admin/users', 'AdminUsers::store', ['filter' => 'auth']);
+$routes->get('admin/users/edit/(:num)', 'AdminUsers::edit/$1', ['filter' => 'auth']);
+$routes->post('admin/users/update/(:num)', 'AdminUsers::update/$1', ['filter' => 'auth']);
 $routes->get('billing', 'Home::billing', ['filter' => 'auth']);
