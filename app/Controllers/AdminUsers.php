@@ -42,7 +42,18 @@ class AdminUsers extends BaseController
 
     public function store()
     {
+        $isAjax = $this->request->isAJAX();
+
         if (session()->get('role_name') !== 'ADMIN') {
+            if ($isAjax) {
+                return $this->response
+                    ->setStatusCode(403)
+                    ->setJSON([
+                        'ok'      => false,
+                        'message' => 'Unauthorized request.',
+                    ]);
+            }
+
             return redirect()->to('/billing');
         }
 
@@ -55,6 +66,16 @@ class AdminUsers extends BaseController
         ];
 
         if (! $this->validate($rules)) {
+            if ($isAjax) {
+                return $this->response
+                    ->setStatusCode(422)
+                    ->setJSON([
+                        'ok'      => false,
+                        'message' => 'Please fix the validation errors.',
+                        'errors'  => $this->validator->getErrors(),
+                    ]);
+            }
+
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
@@ -70,7 +91,25 @@ class AdminUsers extends BaseController
         ];
 
         if (! $users->insert($userData)) {
+            if ($isAjax) {
+                return $this->response
+                    ->setStatusCode(500)
+                    ->setJSON([
+                        'ok'      => false,
+                        'message' => 'Failed to create user.',
+                        'errors'  => $users->errors(),
+                    ]);
+            }
+
             return redirect()->back()->withInput()->with('errors', $users->errors());
+        }
+
+        if ($isAjax) {
+            return $this->response->setJSON([
+                'ok'       => true,
+                'message'  => 'User created successfully.',
+                'redirect' => site_url('admin/users'),
+            ]);
         }
 
         return redirect()->to('/admin/users')->with('success', 'User created successfully.');
