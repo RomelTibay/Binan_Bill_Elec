@@ -17,10 +17,11 @@ class Billing extends BaseController
         }
 
         $clients = new ClientModel();
+        $userId  = (int) session()->get('user_id');
 
         return view('billing/dashboard', [
             'currentUser' => (string) session()->get('full_name'),
-            'clients'     => $clients->getClientsForList(),
+            'clients'     => $clients->getClientsForUser($userId),
         ]);
     }
 
@@ -30,7 +31,9 @@ class Billing extends BaseController
             return redirect()->to('/admin');
         }
 
-        return redirect()->to('/billing/dashboard')->with('errors', ['Normal users cannot manage client accounts.']);
+        return view('billing/client_create', [
+            'currentUser' => (string) session()->get('full_name'),
+        ]);
     }
 
     public function storeClient()
@@ -39,7 +42,48 @@ class Billing extends BaseController
             return redirect()->to('/admin');
         }
 
-        return redirect()->to('/billing/dashboard')->with('errors', ['Normal users cannot manage client accounts.']);
+        $rules = [
+            'full_name'    => 'required|min_length[3]|max_length[120]',
+            'address'      => 'required|min_length[3]|max_length[255]',
+            'meter_number' => 'required|min_length[3]|max_length[50]|is_unique[clients.meter_number]',
+        ];
+
+        if (! $this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $clients = new ClientModel();
+        $userId  = (int) session()->get('user_id');
+
+        $accountNo = $this->generateAccountNumber($clients);
+        if ($accountNo === null) {
+            return redirect()->back()->withInput()->with('errors', ['Unable to generate account number. Please try again.']);
+        }
+
+        $data = [
+            'account_no'   => $accountNo,
+            'full_name'    => trim((string) $this->request->getPost('full_name')),
+            'address'      => trim((string) $this->request->getPost('address')),
+            'meter_number' => trim((string) $this->request->getPost('meter_number')),
+            'created_by'   => $userId,
+        ];
+
+        if (! $clients->insert($data)) {
+            return redirect()->back()->withInput()->with('errors', $clients->errors());
+        }
+
+        $clientId = (int) $clients->getInsertID();
+
+        helper('audit');
+        log_action(
+            'CREATE',
+            'BILLING',
+            'clients',
+            $clientId,
+            sprintf('Created client %s (%s) with account %s.', $data['full_name'], $data['meter_number'], $accountNo)
+        );
+
+        return redirect()->to('/billing/dashboard')->with('success', 'Client added successfully.');
     }
 
     public function compute(int $clientId)
@@ -49,10 +93,10 @@ class Billing extends BaseController
         }
 
         $clients = new ClientModel();
-        $client  = $clients->find($clientId);
+        $client  = $clients->findClientForUser($clientId, (int) session()->get('user_id'));
 
         if (! $client) {
-            return redirect()->to('/billing/dashboard')->with('errors', ['Client not found.']);
+            return redirect()->to('/billing/dashboard')->with('errors', ['Client not found or access denied.']);
         }
 
         return view('billing/compute', [
@@ -87,10 +131,10 @@ class Billing extends BaseController
         }
 
         $clients = new ClientModel();
-        $client  = $clients->find($clientId);
+        $client  = $clients->findClientForUser($clientId, (int) session()->get('user_id'));
 
         if (! $client) {
-            return redirect()->to('/billing/dashboard')->with('errors', ['Client not found.']);
+            return redirect()->to('/billing/dashboard')->with('errors', ['Client not found or access denied.']);
         }
 
         $totalKw = (int) $this->request->getPost('total_kw');
@@ -136,7 +180,15 @@ class Billing extends BaseController
         }
 
         helper('audit');
-        log_action('COMPUTE', 'BILLING', 'bills', $billId);
+        $description = sprintf(
+            'Computed bill #%d for client %s (%s): %d kW, total PHP %s.',
+            $billId,
+            (string) ($client['full_name'] ?? 'Unknown Client'),
+            (string) ($client['account_no'] ?? 'No Account'),
+            $totalKw,
+            number_format((float) $totalAmount, 2, '.', '')
+        );
+        log_action('COMPUTE', 'BILLING', 'bills', $billId, $description);
 
         return redirect()->to('/billing/dashboard')->with('success', 'Bill computed successfully.');
     }
@@ -234,7 +286,7 @@ class Billing extends BaseController
 
         return view('billing/action_trails', [
             'currentUser' => (string) session()->get('full_name'),
-            'logs'        => $logs->getLogsForUser((int) session()->get('user_id')),
+            'logs'        => $logs->getBillingLogsForUser((int) session()->get('user_id')),
         ]);
     }
 
@@ -292,5 +344,19 @@ class Billing extends BaseController
             'total_amount' => number_format(round($totalAmount, 2), 2, '.', ''),
             'lines'        => $lines,
         ];
+    }
+
+    private function generateAccountNumber(ClientModel $clients): ?string
+    {
+        for ($attempt = 0; $attempt < 20; $attempt++) {
+            $candidate = sprintf('ACC-%s-%04d', date('Ymd'), random_int(0, 9999));
+
+            $exists = $clients->where('account_no', $candidate)->first();
+            if (! $exists) {
+                return $candidate;
+            }
+        }
+
+        return null;
     }
 }

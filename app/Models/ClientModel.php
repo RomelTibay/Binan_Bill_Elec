@@ -26,4 +26,22 @@ class ClientModel extends Model
             ->orderBy('clients.id', 'DESC')
             ->findAll();
     }
+
+    public function getClientsForUser(int $userId): array
+    {
+        return $this->select('clients.id, clients.account_no, clients.full_name, clients.address, clients.meter_number')
+            ->where('clients.created_by', $userId)
+            ->orderBy('clients.id', 'DESC')
+            ->findAll();
+    }
+
+    public function findClientForUser(int $clientId, int $userId): ?array
+    {
+        $row = $this->select('clients.id, clients.account_no, clients.full_name, clients.address, clients.meter_number, clients.created_by')
+            ->where('clients.id', $clientId)
+            ->where('clients.created_by', $userId)
+            ->first();
+
+        return $row ?: null;
+    }
 }

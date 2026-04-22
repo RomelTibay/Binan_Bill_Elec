@@ -38,7 +38,13 @@ class Auth extends BaseController
             'role_name'    => $user['role_name'],
         ]);
 
-        log_action('LOGIN', 'AUTH', 'users', (int) $user['id']);
+        log_action(
+            'LOGIN',
+            'AUTH',
+            'users',
+            (int) $user['id'],
+            sprintf('User %s logged in.', (string) $user['username'])
+        );
 
         if ($user['role_name'] === 'ADMIN') {
             return redirect()->to('/admin');
@@ -53,7 +59,14 @@ class Auth extends BaseController
 
         $userId = session()->get('user_id') ? (int) session()->get('user_id') : null;
         if ($userId !== null) {
-            log_action('LOGOUT', 'AUTH', 'users', $userId);
+            $username = (string) (session()->get('username') ?? 'unknown');
+            log_action(
+                'LOGOUT',
+                'AUTH',
+                'users',
+                $userId,
+                sprintf('User %s logged out.', $username)
+            );
         }
 
         session()->destroy();

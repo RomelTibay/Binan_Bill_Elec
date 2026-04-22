@@ -106,11 +106,13 @@ class AdminUsers extends BaseController
         }
 
         helper('audit');
+        $newUserId = (int) $users->getInsertID();
         log_action(
             'CREATE',
             'ADMIN_USERS',
             'users',
-            (int) $users->getInsertID()
+            $newUserId,
+            sprintf('Created user %s (%s).', $userData['username'], $userData['email'])
         );
 
         if ($isAjax) {
@@ -269,7 +271,8 @@ class AdminUsers extends BaseController
             'UPDATE',
             'ADMIN_USERS',
             'users',
-            $id
+            $id,
+            sprintf('Updated user %s (%s).', $updateData['username'], $updateData['email'])
         );
 
         if ($isAjax) {
@@ -370,7 +373,8 @@ class AdminUsers extends BaseController
             'DELETE',
             'ADMIN_USERS',
             'users',
-            $id
+            $id,
+            sprintf('Deleted user %s (%s).', (string) $user['username'], (string) $user['email'])
         );
 
         if ($isAjax) {

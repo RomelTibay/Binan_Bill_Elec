@@ -91,7 +91,10 @@
 
     <p>Logged in as: <?= esc($currentUser) ?></p>
     <p class="top-links">
+        <a href="<?= site_url('billing/clients/create') ?>">Add Client</a>
         <a href="<?= site_url('billing/compute') ?>">Compute KW (Live)</a>
+        <a href="<?= site_url('billing/history') ?>">My Billing History</a>
+        <a href="<?= site_url('billing/action-trails') ?>">My Action Trails</a>
         <a href="<?= site_url('logout') ?>">Logout</a>
     </p>
 

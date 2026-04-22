@@ -9,6 +9,10 @@ class RateTierSeeder extends Seeder
     public function run()
     {
         $now = date('Y-m-d H:i:s');
+        $table = $this->db->table('rate_tiers');
+
+        // Keep tier setup deterministic across repeated seeding.
+        $this->db->table('rate_tiers')->truncate();
 
         $data = [
             [
@@ -34,6 +38,6 @@ class RateTierSeeder extends Seeder
             ],
         ];
 
-        $this->db->table('rate_tiers')->insertBatch($data);
+        $table->insertBatch($data);
     }
 }

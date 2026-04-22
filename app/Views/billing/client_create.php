@@ -49,6 +49,11 @@
             margin-bottom: 10px;
         }
 
+        .muted {
+            color: #4f6780;
+            font-size: 13px;
+        }
+
         input[type="text"] {
             width: 360px;
             max-width: 100%;
@@ -94,13 +99,10 @@
         </div>
     <?php endif; ?>
 
+    <p class="muted">Account number is auto-generated when you save the client.</p>
+
     <form method="post" action="<?= site_url('billing/clients') ?>">
         <?= csrf_field() ?>
-
-        <div class="field">
-            <label for="account_no">Account Number</label><br>
-            <input id="account_no" type="text" name="account_no" value="<?= esc((string) old('account_no')) ?>" required>
-        </div>
 
         <div class="field">
             <label for="full_name">Client Full Name</label><br>

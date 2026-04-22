@@ -81,34 +81,23 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Date</th>
                 <th>Action</th>
-                <th>Module</th>
-                <th>Target</th>
+                <th>Description</th>
+                <th>Date</th>
             </tr>
         </thead>
         <tbody>
             <?php if (empty($logs)): ?>
                 <tr>
-                    <td colspan="5">No action trails found.</td>
+                    <td colspan="4">No action trails found.</td>
                 </tr>
             <?php else: ?>
                 <?php foreach ($logs as $log): ?>
-                    <?php
-                        $target = '-';
-                        if (! empty($log['target_type'])) {
-                            $target = $log['target_type'];
-                            if (! empty($log['target_id'])) {
-                                $target .= '#' . $log['target_id'];
-                            }
-                        }
-                    ?>
                     <tr>
                         <td><?= esc((string) $log['id']) ?></td>
-                        <td><?= esc((string) ($log['created_at'] ?? '-')) ?></td>
                         <td><?= esc((string) $log['action']) ?></td>
-                        <td><?= esc((string) $log['module']) ?></td>
-                        <td><?= esc($target) ?></td>
+                        <td><?= esc((string) ($log['description'] ?? 'Action recorded.')) ?></td>
+                        <td><?= esc((string) ($log['created_at'] ?? '-')) ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
