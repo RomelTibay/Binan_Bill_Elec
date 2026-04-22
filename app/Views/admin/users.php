@@ -38,6 +38,10 @@
             margin-bottom: 6px;
         }
 
+        .top-links a:hover {
+            background: #cde6b6;
+        }
+
         .ok {
             color: #1d6d1d;
             background: #ddf5dd;
@@ -73,6 +77,50 @@
 
         tr:nth-child(even) {
             background: #f8fbf4;
+        }
+
+        a {
+            color: #2d5a1f;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 7px;
+            border-radius: 10px;
+            font-size: 12px;
+            border: 1px solid transparent;
+        }
+
+        .badge.yes {
+            background: #dff4d5;
+            border-color: #8cb078;
+            color: #234717;
+        }
+
+        .badge.no {
+            background: #f4e6dc;
+            border-color: #b69378;
+            color: #6f2f16;
+        }
+
+        .action-link {
+            display: inline-block;
+            text-decoration: none;
+            color: #234717;
+            background: #e4f2d5;
+            border: 1px solid #8cb078;
+            border-radius: 4px;
+            padding: 3px 7px;
+        }
+
+        .action-link.delete {
+            background: #f6e5e5;
+            border-color: #c98f8f;
+            color: #7e1f1f;
+        }
+
+        .action-disabled {
+            color: #9ca59a;
         }
 
         .sub {
@@ -133,14 +181,19 @@
                         <td><?= esc($user['username']) ?></td>
                         <td><?= esc($user['email']) ?></td>
                         <td><?= esc($user['role_name']) ?></td>
-                        <td><?= (int) $user['is_active'] === 1 ? 'Yes' : 'No' ?></td>
                         <td>
-                            <a href="<?= site_url('admin/users/edit/' . $user['id']) ?>">Edit</a>
-                            &nbsp;|&nbsp;
-                            <?php if ((int) $user['id'] !== (int) session()->get('user_id')): ?>
-                                <a href="<?= site_url('admin/users/delete/' . $user['id']) ?>" style="color: red;">Delete</a>
+                            <?php if ((int) $user['is_active'] === 1): ?>
+                                <span class="badge yes">Yes</span>
                             <?php else: ?>
-                                <span style="color: #aaa;">Delete</span>
+                                <span class="badge no">No</span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <a class="action-link" href="<?= site_url('admin/users/edit/' . $user['id']) ?>">Edit</a>
+                            <?php if ((int) $user['id'] !== (int) session()->get('user_id')): ?>
+                                <a class="action-link delete" href="<?= site_url('admin/users/delete/' . $user['id']) ?>">Delete</a>
+                            <?php else: ?>
+                                <span class="action-disabled">Delete</span>
                             <?php endif; ?>
                         </td>
                     </tr>

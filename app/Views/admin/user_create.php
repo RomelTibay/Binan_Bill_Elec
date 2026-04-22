@@ -3,22 +3,132 @@
 <head>
     <meta charset="utf-8">
     <title>Admin - Create User</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 18px;
+            background: #eef2e4;
+            font-family: Verdana, "Trebuchet MS", sans-serif;
+            color: #1f1f1f;
+        }
+
+        .box {
+            background: #fff;
+            border: 3px double #6f7c58;
+            padding: 14px;
+            border-radius: 6px;
+            max-width: 760px;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #364b2d;
+            letter-spacing: 0.3px;
+        }
+
+        .top-links a {
+            display: inline-block;
+            text-decoration: none;
+            color: #203d15;
+            background: #d9efc5;
+            border: 1px solid #6f8b56;
+            border-radius: 4px;
+            padding: 5px 8px;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+
+        .top-links a:hover {
+            background: #cde6b6;
+        }
+
+        .err {
+            color: #8f1f1f;
+            background: #ffdcdc;
+            border: 1px solid #be5a5a;
+            padding: 6px;
+            margin-bottom: 10px;
+        }
+
+        .field {
+            margin-bottom: 10px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        select {
+            width: 360px;
+            max-width: 100%;
+            border: 1px solid #8c9d7a;
+            border-radius: 4px;
+            padding: 7px;
+            font: inherit;
+            background: #fcfef9;
+        }
+
+        .check {
+            margin-top: 2px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            border: 1px solid #6f8b56;
+            background: #d9efc5;
+            color: #203d15;
+            padding: 7px 12px;
+            border-radius: 4px;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: default;
+        }
+
+        .ajax-message {
+            display: none;
+            border: 1px solid transparent;
+            padding: 6px;
+            margin-bottom: 10px;
+        }
+
+        .ajax-message.ok {
+            color: #1d6d1d;
+            background: #ddf5dd;
+            border-color: #66a066;
+        }
+
+        .ajax-message.err {
+            color: #8f1f1f;
+            background: #ffdcdc;
+            border-color: #be5a5a;
+        }
+
+        .ajax-errors {
+            display: none;
+            color: #8f1f1f;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
     <?php helper('form'); ?>
     <?php $errors = session()->getFlashdata('errors') ?? []; ?>
 
+    <div class="box">
     <h2>Create User</h2>
 
     <p>Logged in as: <?= esc($currentUser) ?></p>
-    <p>
+    <p class="top-links">
         <a href="<?= site_url('admin/users') ?>">Back to User List</a>
-        |
         <a href="<?= site_url('logout') ?>">Logout</a>
     </p>
 
     <?php if (! empty($errors)): ?>
-        <div style="color:red;">
+        <div class="err">
             <p>Please fix the following errors:</p>
             <ul>
                 <?php foreach ($errors as $error): ?>
@@ -28,28 +138,28 @@
         </div>
     <?php endif; ?>
 
-    <div id="ajax-message" style="display:none;"></div>
-    <ul id="ajax-errors" style="display:none; color:red;"></ul>
+    <div id="ajax-message" class="ajax-message"></div>
+    <ul id="ajax-errors" class="ajax-errors"></ul>
 
     <form id="create-user-form" method="post" action="<?= site_url('admin/users') ?>">
         <?= csrf_field() ?>
 
-        <div>
+        <div class="field">
             <label for="full_name">Full Name</label><br>
             <input id="full_name" type="text" name="full_name" value="<?= esc((string) old('full_name')) ?>" required>
         </div>
 
-        <div>
+        <div class="field">
             <label for="username">Username</label><br>
             <input id="username" type="text" name="username" value="<?= esc((string) old('username')) ?>" required>
         </div>
 
-        <div>
+        <div class="field">
             <label for="email">Email</label><br>
             <input id="email" type="email" name="email" value="<?= esc((string) old('email')) ?>" required>
         </div>
 
-        <div>
+        <div class="field">
             <label for="role_id">Role</label><br>
             <select id="role_id" name="role_id" required>
                 <option value="">-- Select Role --</option>
@@ -62,12 +172,12 @@
             </select>
         </div>
 
-        <div>
+        <div class="field">
             <label for="password">Password</label><br>
             <input id="password" type="password" name="password" required>
         </div>
 
-        <div>
+        <div class="check">
             <?php $isActiveOld = old('is_active'); ?>
             <label>
                 <input type="checkbox" name="is_active" value="1" <?= $isActiveOld === null || $isActiveOld === '1' ? 'checked' : '' ?>>
@@ -90,6 +200,7 @@
         const submitButton = form.querySelector('button[type="submit"]');
 
         function clearFeedback() {
+            messageBox.className = 'ajax-message';
             messageBox.style.display = 'none';
             messageBox.textContent = '';
             errorList.style.display = 'none';
@@ -135,8 +246,8 @@
                 }
 
                 if (response.ok && result.ok) {
+                    messageBox.className = 'ajax-message ok';
                     messageBox.style.display = 'block';
-                    messageBox.style.color = 'green';
                     messageBox.textContent = result.message || 'User created successfully.';
 
                     form.reset();
@@ -154,13 +265,13 @@
                     return;
                 }
 
+                messageBox.className = 'ajax-message err';
                 messageBox.style.display = 'block';
-                messageBox.style.color = 'red';
                 messageBox.textContent = result.message || 'Could not create user.';
                 showErrors(result.errors);
             } catch (error) {
+                messageBox.className = 'ajax-message err';
                 messageBox.style.display = 'block';
-                messageBox.style.color = 'red';
                 messageBox.textContent = 'Request failed. Please try again.';
             } finally {
                 submitButton.disabled = false;
@@ -168,5 +279,6 @@
         });
     })();
     </script>
+    </div>
 </body>
 </html>
