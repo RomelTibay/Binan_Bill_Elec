@@ -7,32 +7,31 @@
         body {
             margin: 0;
             padding: 18px;
-            background: #f7f4e8;
-            font-family: "Comic Sans MS", "Trebuchet MS", sans-serif;
+            background: #eaf4ff;
+            font-family: Verdana, "Trebuchet MS", sans-serif;
             color: #1f1f1f;
         }
 
         .box {
-            background: #fffef7;
-            border: 3px dashed #7b5e3f;
-            border-radius: 10px;
+            background: #ffffff;
+            border: 3px double #6f93b8;
+            border-radius: 6px;
             padding: 14px;
-            box-shadow: 2px 2px 0 #d0c1a7;
-            max-width: 980px;
+            max-width: 1080px;
         }
 
         h2, h3 {
             margin-top: 0;
-            color: #31588e;
-            text-decoration: underline;
+            color: #1f4f82;
+            letter-spacing: 0.3px;
         }
 
         .top-links a {
-            background: #ffe08a;
-            border: 1px solid #775f1d;
-            color: #3a2d00;
+            background: #d8ebff;
+            border: 1px solid #6f93b8;
+            color: #143a5f;
             text-decoration: none;
-            padding: 4px 8px;
+            padding: 5px 8px;
             border-radius: 4px;
             margin-right: 6px;
             display: inline-block;
@@ -57,28 +56,32 @@
             width: 100%;
             border-collapse: collapse;
             background: #ffffff;
-            border: 2px solid #8e8e8e;
+            border: 2px solid #86a6c7;
         }
 
         th {
-            background: #cfdff3;
-            border: 1px solid #8a9cb3;
+            background: #cde3fb;
+            border: 1px solid #8baccf;
             padding: 8px;
             text-align: left;
         }
 
         td {
-            border: 1px solid #b9b9b9;
+            border: 1px solid #b8cee4;
             padding: 8px;
         }
 
         tr:nth-child(even) {
-            background: #f3f7ff;
+            background: #f5f9ff;
         }
 
         .muted {
-            color: #6d5f4b;
+            color: #4f6780;
             font-size: 13px;
+        }
+
+        a {
+            color: #1d4f7f;
         }
     </style>
 </head>

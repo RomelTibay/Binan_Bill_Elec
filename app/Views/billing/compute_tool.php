@@ -3,14 +3,90 @@
 <head>
     <meta charset="utf-8">
     <title>Compute KW (Live)</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 18px;
+            background: #eaf4ff;
+            font-family: Verdana, "Trebuchet MS", sans-serif;
+            color: #1f1f1f;
+        }
+
+        .box {
+            background: #ffffff;
+            border: 3px double #6f93b8;
+            border-radius: 6px;
+            padding: 14px;
+            max-width: 1080px;
+        }
+
+        h2, h4 {
+            margin-top: 0;
+            color: #1f4f82;
+            letter-spacing: 0.3px;
+        }
+
+        .top-links a {
+            display: inline-block;
+            text-decoration: none;
+            color: #143a5f;
+            background: #d8ebff;
+            border: 1px solid #6f93b8;
+            border-radius: 4px;
+            padding: 5px 8px;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid #86a6c7;
+            background: #fff;
+        }
+
+        th {
+            background: #cde3fb;
+            border: 1px solid #8baccf;
+            text-align: left;
+            padding: 8px;
+        }
+
+        td {
+            border: 1px solid #b8cee4;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background: #f5f9ff;
+        }
+
+        .field {
+            margin-bottom: 10px;
+        }
+
+        input[type="number"] {
+            width: 260px;
+            max-width: 100%;
+            border: 1px solid #86a6c7;
+            border-radius: 4px;
+            padding: 7px;
+            font: inherit;
+            background: #f9fcff;
+        }
+
+        a {
+            color: #1d4f7f;
+        }
+    </style>
 </head>
 <body>
+    <div class="box">
     <h2>Compute KW (Live Preview)</h2>
 
     <p>Logged in as: <?= esc($currentUser) ?></p>
-    <p>
+    <p class="top-links">
         <a href="<?= site_url('billing/dashboard') ?>">Back to Dashboard</a>
-        |
         <a href="<?= site_url('logout') ?>">Logout</a>
     </p>
 
@@ -24,7 +100,7 @@
     <form method="post" action="javascript:void(0);">
         <?= csrf_field() ?>
 
-        <div>
+        <div class="field">
             <label for="total_kw">Total Consumption (kW)</label><br>
             <input id="total_kw" type="number" min="1" name="total_kw" value="" required>
         </div>
@@ -47,6 +123,7 @@
             </thead>
             <tbody id="preview-lines"></tbody>
         </table>
+    </div>
     </div>
 
     <script>

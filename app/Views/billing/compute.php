@@ -3,19 +3,112 @@
 <head>
     <meta charset="utf-8">
     <title>Compute Bill</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 18px;
+            background: #eaf4ff;
+            font-family: Verdana, "Trebuchet MS", sans-serif;
+            color: #1f1f1f;
+        }
+
+        .box {
+            background: #ffffff;
+            border: 3px double #6f93b8;
+            border-radius: 6px;
+            padding: 14px;
+            max-width: 1080px;
+        }
+
+        h2, h3, h4 {
+            margin-top: 0;
+            color: #1f4f82;
+            letter-spacing: 0.3px;
+        }
+
+        .top-links a {
+            display: inline-block;
+            text-decoration: none;
+            color: #143a5f;
+            background: #d8ebff;
+            border: 1px solid #6f93b8;
+            border-radius: 4px;
+            padding: 5px 8px;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+
+        .err {
+            color: #8f1f1f;
+            background: #ffdcdc;
+            border: 1px solid #be5a5a;
+            padding: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid #86a6c7;
+            background: #fff;
+        }
+
+        th {
+            background: #cde3fb;
+            border: 1px solid #8baccf;
+            text-align: left;
+            padding: 8px;
+        }
+
+        td {
+            border: 1px solid #b8cee4;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background: #f5f9ff;
+        }
+
+        .field {
+            margin-bottom: 10px;
+        }
+
+        input[type="number"] {
+            width: 260px;
+            max-width: 100%;
+            border: 1px solid #86a6c7;
+            border-radius: 4px;
+            padding: 7px;
+            font: inherit;
+            background: #f9fcff;
+        }
+
+        button {
+            border: 1px solid #537ea8;
+            background: #cfe7ff;
+            color: #143a5f;
+            padding: 7px 12px;
+            border-radius: 4px;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        a {
+            color: #1d4f7f;
+        }
+    </style>
 </head>
 <body>
+    <div class="box">
     <h2>Compute Electric Bill</h2>
 
     <p>Logged in as: <?= esc($currentUser) ?></p>
-    <p>
+    <p class="top-links">
         <a href="<?= site_url('billing/dashboard') ?>">Back to Dashboard</a>
-        |
         <a href="<?= site_url('logout') ?>">Logout</a>
     </p>
 
     <?php if (session()->getFlashdata('errors')): ?>
-        <div style="color:red;">
+        <div class="err">
             <ul>
                 <?php foreach ((array) session()->getFlashdata('errors') as $error): ?>
                     <li><?= esc($error) ?></li>
@@ -40,7 +133,7 @@
     <form method="post" action="<?= site_url('billing/compute/' . $client['id']) ?>">
         <?= csrf_field() ?>
 
-        <div>
+        <div class="field">
             <label for="total_kw">Total Consumption (kW)</label><br>
             <input id="total_kw" type="number" min="1" name="total_kw" value="<?= esc((string) old('total_kw')) ?>" required>
         </div>
@@ -67,6 +160,7 @@
         <br>
         <button type="submit">Compute Bill</button>
     </form>
+    </div>
 
     <script>
         (function () {
