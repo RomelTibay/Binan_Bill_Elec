@@ -8,6 +8,10 @@ use Config\Database;
 
 class AdminUsers extends BaseController
 {
+    /**
+     * Displays the list of users for the admin dashboard.
+     * Connects to: UserModel (Database) and view: app/Views/admin/users.php
+     */
     public function index()
     {
         if (session()->get('role_name') !== 'ADMIN') {
@@ -22,6 +26,10 @@ class AdminUsers extends BaseController
         ]);
     }
 
+    /**
+     * Displays the form to create a new user.
+     * Connects to: Database (roles table) and view: app/Views/admin/user_create.php
+     */
     public function create()
     {
         if (session()->get('role_name') !== 'ADMIN') {
@@ -41,6 +49,10 @@ class AdminUsers extends BaseController
         ]);
     }
 
+    /**
+     * Handles the submission of the new user form.
+     * Connects to: UserModel (Database), Audit Helper, and routes (/admin/users)
+     */
     public function store()
     {
         $isAjax = $this->request->isAJAX();
@@ -126,6 +138,10 @@ class AdminUsers extends BaseController
         return redirect()->to('/admin/users')->with('success', 'User created successfully.');
     }
 
+    /**
+     * Displays the form to edit an existing user.
+     * Connects to: UserModel, Database (roles table), and view: app/Views/admin/user_edit.php
+     */
     public function edit(int $id)
     {
         if (session()->get('role_name') !== 'ADMIN') {
@@ -153,6 +169,10 @@ class AdminUsers extends BaseController
         ]);
     }
 
+    /**
+     * Handles the submission to update an existing user.
+     * Connects to: UserModel (Database), Audit Helper, and routes (/admin/users)
+     */
     public function update(int $id)
     {
         $isAjax = $this->request->isAJAX();
@@ -309,6 +329,10 @@ class AdminUsers extends BaseController
         ]);
     }
 
+    /**
+     * Handles the actual deletion of a user.
+     * Connects to: UserModel (Database), Audit Helper, and routes (/admin/users)
+     */
     public function destroy(int $id)
     {
         $isAjax = $this->request->isAJAX();
@@ -388,6 +412,10 @@ class AdminUsers extends BaseController
         return redirect()->to('/admin/users')->with('success', 'User deleted successfully.');
     }
 
+    /**
+     * Displays the confirmation page for deleting a user.
+     * Connects to: UserModel (Database) and view: app/Views/admin/user_delete.php
+     */
     public function auditLogs()
     {
         if (session()->get('role_name') !== 'ADMIN') {

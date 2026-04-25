@@ -28,6 +28,8 @@ abstract class BaseController extends Controller
     // protected $session;
 
     /**
+     * Initializes the controller with standard required objects.
+     * Connects to: HTTP Request, HTTP Response, and Logger components.
      * @return void
      */
     public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger)

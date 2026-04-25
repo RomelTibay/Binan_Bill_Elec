@@ -10,6 +10,10 @@ use App\Models\RateTierModel;
 
 class Billing extends BaseController
 {
+    /**
+     * Displays the billing dashboard for normal users.
+     * Connects to: ClientModel (Database) and view: app/Views/billing/dashboard.php
+     */
     public function index()
     {
         if (session()->get('role_name') !== 'NORMAL_USER') {
@@ -25,6 +29,10 @@ class Billing extends BaseController
         ]);
     }
 
+    /**
+     * Displays the form to create a new client.
+     * Connects to: view: app/Views/billing/client_create.php
+     */
     public function createClient()
     {
         if (session()->get('role_name') !== 'NORMAL_USER') {
@@ -36,6 +44,10 @@ class Billing extends BaseController
         ]);
     }
 
+    /**
+     * Handles the submission of the new client form.
+     * Connects to: ClientModel (Database), Audit Helper, and routes (/billing/dashboard)
+     */
     public function storeClient()
     {
         if (session()->get('role_name') !== 'NORMAL_USER') {
@@ -86,6 +98,10 @@ class Billing extends BaseController
         return redirect()->to('/billing/dashboard')->with('success', 'Client added successfully.');
     }
 
+    /**
+     * Displays the compute bill form for a specific client.
+     * Connects to: ClientModel (Database) and view: app/Views/billing/compute.php
+     */
     public function compute(int $clientId)
     {
         if (session()->get('role_name') !== 'NORMAL_USER') {
@@ -105,6 +121,10 @@ class Billing extends BaseController
         ]);
     }
 
+    /**
+     * Displays a standalone compute tool (without tying to a specific client).
+     * Connects to: view: app/Views/billing/compute_tool.php
+     */
     public function computeTool()
     {
         if (session()->get('role_name') !== 'NORMAL_USER') {
@@ -116,6 +136,10 @@ class Billing extends BaseController
         ]);
     }
 
+    /**
+     * Handles the saving of a computed bill for a client.
+     * Connects to: ClientModel, RateTierModel, BillModel, BillLineModel, DB Transaction, Audit Helper, and routes (/billing/dashboard)
+     */
     public function storeCompute(int $clientId)
     {
         if (session()->get('role_name') !== 'NORMAL_USER') {
@@ -193,6 +217,10 @@ class Billing extends BaseController
         return redirect()->to('/billing/dashboard')->with('success', 'Bill computed successfully.');
     }
 
+    /**
+     * Returns a JSON preview of the bill computation based on provided total_kw.
+     * Connects to: RateTierModel (via buildTierComputation) and returns JSON Response.
+     */
     public function previewCompute()
     {
         if (session()->get('role_name') !== 'NORMAL_USER') {
@@ -240,6 +268,10 @@ class Billing extends BaseController
         ]);
     }
 
+    /**
+     * Displays the billing history for the current user.
+     * Connects to: BillModel (Database) and view: app/Views/billing/history.php
+     */
     public function history()
     {
         if (session()->get('role_name') !== 'NORMAL_USER') {
@@ -254,6 +286,10 @@ class Billing extends BaseController
         ]);
     }
 
+    /**
+     * Displays the details of a specific bill.
+     * Connects to: BillModel, BillLineModel (Database), and view: app/Views/billing/bill_detail.php
+     */
     public function billDetail(int $billId)
     {
         if (session()->get('role_name') !== 'NORMAL_USER') {
@@ -276,6 +312,10 @@ class Billing extends BaseController
         ]);
     }
 
+    /**
+     * Displays the audit trail/action logs for the current normal user.
+     * Connects to: AuditLogModel (Database) and view: app/Views/billing/action_trails.php
+     */
     public function actionTrails()
     {
         if (session()->get('role_name') !== 'NORMAL_USER') {
@@ -290,6 +330,10 @@ class Billing extends BaseController
         ]);
     }
 
+    /**
+     * Helper method to compute the bill lines and total based on rate tiers.
+     * Connects to: RateTierModel (Database)
+     */
     private function buildTierComputation(int $totalKw): array
     {
         $tierModel = new RateTierModel();
@@ -346,6 +390,10 @@ class Billing extends BaseController
         ];
     }
 
+    /**
+     * Helper method to generate a unique account number for a new client.
+     * Connects to: ClientModel (Database)
+     */
     private function generateAccountNumber(ClientModel $clients): ?string
     {
         for ($attempt = 0; $attempt < 20; $attempt++) {
